@@ -1,0 +1,21 @@
+{
+  "name": "cara-api",
+  "version": "1.0.0",
+  "description": "This is the official REST Api for the Cara App/Web App",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "Sarthak Rohatgi",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^2.28.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.12"
+  },
+  "devDependencies": {
+    "prisma": "^2.28.0"
+  }
+}

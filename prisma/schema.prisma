@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model appointment_details {
+  appointment_details_id Int          @id @default(autoincrement())
+  appointment_id         BigInt
+  service_id             BigInt
+  appointments           appointments @relation(fields: [appointment_id], references: [appointment_id])
+  services               services     @relation(fields: [service_id], references: [service_id])
+}
+
+model appointments {
+  appointment_id      BigInt                @id @default(autoincrement())
+  user_id             String                @db.VarChar(120)
+  salon_id            Int
+  chair_number        String                @db.Char(2)
+  date_of_appointment DateTime              @db.Date
+  appointment_stamp   DateTime?             @default(now()) @db.Timestamp(6)
+  total_price         String                @db.VarChar(7)
+  appointment_status  appointment_status?
+  slot_id             Int?
+  salon               salon                 @relation(fields: [salon_id], references: [salon_id])
+  slots               slots?                @relation(fields: [slot_id], references: [slot_id])
+  users               users                 @relation(fields: [user_id], references: [email_address])
+  appointment_details appointment_details[]
+  user_rating         user_rating[]
+}
+
+model brand {
+  brand_id                  Int     @id @default(autoincrement())
+  name                      String  @db.VarChar(50)
+  representative_first_name String  @db.VarChar(50)
+  representative_last_name  String  @db.VarChar(50)
+  contact_number            String  @db.Char(10)
+  website_url               String? @db.VarChar(255)
+  salon                     salon[]
+}
+
+model categories {
+  category_id   BigInt     @id @default(autoincrement())
+  salon_id      Int
+  category_name String     @db.VarChar(100)
+  salon         salon      @relation(fields: [salon_id], references: [salon_id])
+  services      services[]
+}
+
+model salon {
+  salon_id           Int            @id @default(autoincrement())
+  brand_id           Int
+  salon_name         String         @db.VarChar(120)
+  address_line_one   String         @db.VarChar(100)
+  address_line_two   String?        @db.VarChar(100)
+  address_line_three String?        @db.VarChar(100)
+  zipcode            String         @db.Char(6)
+  email_address      String         @db.VarChar(120)
+  contact_number     String         @db.Char(10)
+  logo               String?        @db.VarChar(255)
+  photos             String[]       @db.VarChar
+  website            String?        @db.VarChar(255)
+  joinstamp          DateTime?      @default(now()) @db.Timestamp(6)
+  open_year          String?        @db.Char(4)
+  open_time          DateTime       @db.Time(6)
+  close_time         DateTime       @db.Time(6)
+  open_weekdays      weekdays[]
+  number_of_chairs   Int?
+  salon_type         salon_type     @default(UNISEX)
+  brand              brand          @relation(fields: [brand_id], references: [brand_id])
+  appointments       appointments[]
+  categories         categories[]
+  slots              slots[]
+  upper_banner       upper_banner[]
+  user_rating        user_rating[]
+  user_review        user_review[]
+}
+
+model services {
+  service_id          BigInt                @id @default(autoincrement())
+  category_id         BigInt
+  service_name        String                @db.VarChar(100)
+  service_price       String                @db.VarChar(7)
+  categories          categories            @relation(fields: [category_id], references: [category_id])
+  appointment_details appointment_details[]
+}
+
+model slots {
+  slot_id      Int            @id @default(autoincrement())
+  salon_id     Int
+  start_time   String         @db.Char(5)
+  end_time     String         @db.Char(5)
+  chair_number String         @db.Char(2)
+  salon        salon          @relation(fields: [salon_id], references: [salon_id])
+  appointments appointments[]
+}
+
+model upper_banner {
+  advertisement_id       Int                     @id @default(autoincrement())
+  salon_id               Int
+  time_stamp             DateTime?               @default(now()) @db.Timestamp(6)
+  banner_url             String                  @db.VarChar(255)
+  start_date             DateTime                @db.Date
+  end_date               DateTime                @db.Date
+  zipcode                String                  @db.Char(6)
+  price                  String                  @db.VarChar(7)
+  banner_position_number banner_position_number?
+  salon                  salon                   @relation(fields: [salon_id], references: [salon_id])
+}
+
+model user_rating {
+  user_rating_id BigInt        @id @default(autoincrement())
+  appointment_id BigInt
+  user_id        String        @db.VarChar(120)
+  salon_id       Int
+  user_rating    star_rating
+  appointments   appointments  @relation(fields: [appointment_id], references: [appointment_id])
+  salon          salon         @relation(fields: [salon_id], references: [salon_id])
+  users          users         @relation(fields: [user_id], references: [email_address])
+  user_review    user_review[]
+}
+
+model user_review {
+  review_id   BigInt      @id @default(autoincrement())
+  review_body String
+  user_id     String      @db.VarChar(120)
+  salon_id    Int
+  rating_id   BigInt
+  user_rating user_rating @relation(fields: [rating_id], references: [user_rating_id])
+  salon       salon       @relation(fields: [salon_id], references: [salon_id])
+  users       users       @relation(fields: [user_id], references: [email_address])
+}
+
+model users {
+  email_address String         @id @db.VarChar(120)
+  first_name    String         @db.VarChar(50)
+  last_name     String         @db.VarChar(50)
+  gender        gender?
+  zipcode       String         @db.Char(6)
+  phone_number  String         @db.Char(10)
+  photo_url     String?        @db.VarChar(255)
+  date_of_birth DateTime?      @db.Date
+  coins         Decimal?       @db.Money
+  joinstamp     DateTime?      @default(now()) @db.Timestamp(6)
+  appointments  appointments[]
+  user_rating   user_rating[]
+  user_review   user_review[]
+}
+
+enum appointment_status {
+  BOOKED
+  CANCELED_BY_USER
+  CANCELED_BY_SALON
+}
+
+enum banner_position_number {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+  SIX
+}
+
+enum gender {
+  MALE
+  FEMALE
+  OTHERS
+}
+
+enum salon_type {
+  MEN
+  WOMEN
+  UNISEX
+}
+
+enum star_rating {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+}
+
+enum weekdays {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
