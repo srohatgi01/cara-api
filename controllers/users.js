@@ -33,10 +33,11 @@ const getUserById = async (req, res) =>
     })
   );
 
+//TODO: Create Update User function
 const updateUser = (req, res) => {
   res.send(`Update User info for ${req.params.id}`);
 };
-
+//TODO: Create Delete User function
 const deleteUser = (req, res) => res.send(`User deleted for ${req.params.id}`);
 
 module.exports = {
