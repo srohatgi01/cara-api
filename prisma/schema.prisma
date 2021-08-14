@@ -9,14 +9,14 @@ datasource db {
 
 model appointment_details {
   appointment_details_id Int          @id @default(autoincrement())
-  appointment_id         BigInt
-  service_id             BigInt
+  appointment_id         Int
+  service_id             Int
   appointments           appointments @relation(fields: [appointment_id], references: [appointment_id])
   services               services     @relation(fields: [service_id], references: [service_id])
 }
 
 model appointments {
-  appointment_id      BigInt                @id @default(autoincrement())
+  appointment_id      Int                   @id @default(autoincrement())
   user_id             String                @db.VarChar(120)
   salon_id            Int
   chair_number        String                @db.Char(2)
@@ -43,7 +43,7 @@ model brand {
 }
 
 model categories {
-  category_id   BigInt     @id @default(autoincrement())
+  category_id   Int        @id @default(autoincrement())
   salon_id      Int
   category_name String     @db.VarChar(100)
   salon         salon      @relation(fields: [salon_id], references: [salon_id])
@@ -80,8 +80,8 @@ model salon {
 }
 
 model services {
-  service_id          BigInt                @id @default(autoincrement())
-  category_id         BigInt
+  service_id          Int                   @id @default(autoincrement())
+  category_id         Int
   service_name        String                @db.VarChar(100)
   service_price       String                @db.VarChar(7)
   categories          categories            @relation(fields: [category_id], references: [category_id])
@@ -112,8 +112,8 @@ model upper_banner {
 }
 
 model user_rating {
-  user_rating_id BigInt        @id @default(autoincrement())
-  appointment_id BigInt
+  user_rating_id Int           @id @default(autoincrement())
+  appointment_id Int
   user_id        String        @db.VarChar(120)
   salon_id       Int
   user_rating    star_rating
@@ -124,11 +124,11 @@ model user_rating {
 }
 
 model user_review {
-  review_id   BigInt      @id @default(autoincrement())
+  review_id   Int         @id @default(autoincrement())
   review_body String
   user_id     String      @db.VarChar(120)
   salon_id    Int
-  rating_id   BigInt
+  rating_id   Int
   user_rating user_rating @relation(fields: [rating_id], references: [user_rating_id])
   salon       salon       @relation(fields: [salon_id], references: [salon_id])
   users       users       @relation(fields: [user_id], references: [email_address])

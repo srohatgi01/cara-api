@@ -1,5 +1,6 @@
 // Imports
 const { PrismaClient } = require("@prisma/client");
+const pool = require("../config");
 
 const prisma = new PrismaClient();
 
@@ -11,6 +12,13 @@ const getSalonById = async (req, res) =>
   res.json(
     await prisma.salon.findUnique({
       where: { salon_id: parseInt(req.params.id) },
+      include: {
+        categories: {
+          include: {
+            services: true,
+          },
+        },
+      },
     })
   );
 
@@ -39,13 +47,38 @@ const createNewSalon = async (req, res) => {
   res.json("Create Salon");
 };
 
-//TODO: Create Update Salon Function
+//TODO: Update Salon Function
 const updateSalon = async (req, res) => {
   res.json("Update Salon");
 };
 
-//TODO: Create Delete Salon Function
+//TODO: Delete Salon Function
 const deleteSalon = async (req, res) => res.json("Delete salon");
+
+// Get 6 salons when you give the zipcode
+const recommenedSalonsByZipcode = async (req, res) => {
+  pool.query(
+    `SELECT salon_id, salon_name, logo FROM salon WHERE zipcode = \'${req.params.id}\'  ORDER BY RANDOM() LIMIT 6 `,
+
+    (err, result) => {
+      console.log(err);
+      //Error handeling + response 
+      result.rows.length === 0
+        ? res.status(200).json({ msg: "No Salons found" })
+        : res.status(200).json(result.rows);
+    }
+  );
+};
+
+const recommenedSalons = async (req, res) => {
+  pool.query(
+    `SELECT salon_id, salon_name, logo FROM salon ORDER BY RANDOM() LIMIT 6 `,
+    (err, result) => {
+      console.log(err);
+      res.json(result.rows);
+    }
+  );
+};
 
 // Exports
 module.exports = {
@@ -54,4 +87,6 @@ module.exports = {
   createNewSalon,
   updateSalon,
   deleteSalon,
+  recommenedSalonsByZipcode,
+  recommenedSalons,
 };
