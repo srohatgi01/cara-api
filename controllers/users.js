@@ -25,13 +25,14 @@ const createNewUser = async (req, res) => {
 };
 
 const getUserById = async (req, res) =>
-  res.json(
-    await prisma.users.findUnique({
+  {
+    let userById = await prisma.users.findUnique({
       where: {
         email_address: req.params.id,
       },
     })
-  );
+    userById != null ? res.status(200).json(userById) : res.status(404).json({'err': 'User Not Found'})
+  }
 
 //TODO: Create Update User function
 const updateUser = (req, res) => {

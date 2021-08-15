@@ -4,7 +4,7 @@ const pool = require("../config");
 const getAdvertisementsByZipcode = async (req, res) => {
     // pool.query('SET TIMEZONE =\'Asia/Calcutta\', SELECT NOW()', (err, res) => console.log(res.rows));
     pool.query(
-      `SELECT * FROM upper_banner WHERE zipcode = '${req.params.zipcode}' AND NOW() at TIME ZONE 'Asia/Calcutta' BETWEEN start_date AND end_date;`,
+      `SELECT salon_id, banner_position_number, banner_url FROM upper_banner WHERE zipcode = '${req.params.zipcode}' AND NOW() at TIME ZONE 'Asia/Calcutta' BETWEEN start_date AND end_date;`,
   
       (err, result) => {
         console.log(err);

@@ -14,10 +14,7 @@ const getCategoryById = async (req, res) =>
 
 const createNewCategory = async (req, res) => {
   const newCategory = await prisma.categories.create({
-    data: {
-      category_name: req.body.category_name,
-      salon_id: req.body.salon_id,
-    },
+    data: req.body
   });
   res.json(newCategory);
 };

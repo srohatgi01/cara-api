@@ -44,7 +44,7 @@ const createNewSalon = async (req, res) => {
       salon_type: req.body.salon_type,
     },
   });
-  res.json("Create Salon");
+  res.status(201).json(newSalon);
 };
 
 //TODO: Update Salon Function
