@@ -58,10 +58,17 @@ const deleteSalon = async (req, res) => res.json("Delete salon");
 // Get 6 salons when you give the zipcode
 const recommenedSalonsByZipcode = async (req, res) => {
   pool.query(
-    `SELECT salon.salon_id, salon.salon_name, salon.logo,  ((cara_standards.safety_measures + cara_standards.professionalism + cara_standards.social_conscience + cara_standards.miscellaneous)/4.0)::numeric(3, 2) AS average FROM salon JOIN cara_standards ON salon.salon_id = cara_standards.salon_id WHERE salon.zipcode = \'${req.params.id}\' ORDER BY RANDOM() LIMIT 6;`,
+    `
+    SELECT salon.salon_id, salon.salon_name, salon.logo,  ((cara_standards.safety_measures + cara_standards.professionalism + cara_standards.social_conscience + cara_standards.miscellaneous)/4.0)::numeric(3, 2) AS average 
+    FROM salon 
+    JOIN cara_standards 
+    ON salon.salon_id = cara_standards.salon_id 
+    WHERE salon.zipcode = \'${req.params.id}\' 
+    ORDER BY RANDOM() LIMIT 6;
+    `,
 
     (err, result) => {
-      console.log(err);
+      err == null ? null : console.log(err);
       //Error handeling + response 
       result.rows.length === 0
         ? res.status(200).json({ msg: "No Salons found" })
@@ -72,9 +79,15 @@ const recommenedSalonsByZipcode = async (req, res) => {
 
 const recommenedSalons = async (req, res) => {
   pool.query(
-    `SELECT salon_id, salon_name, logo FROM salon ORDER BY RANDOM() LIMIT 6 `,
+    `
+    SELECT salon.salon_id, salon.salon_name, salon.logo,  ((cara_standards.safety_measures + cara_standards.professionalism + cara_standards.social_conscience + cara_standards.miscellaneous)/4.0)::numeric(3, 2) AS average 
+    FROM salon 
+    JOIN cara_standards 
+    ON salon.salon_id = cara_standards.salon_id 
+    ORDER BY RANDOM() LIMIT 6;
+    `,
     (err, result) => {
-      console.log(err);
+      err == null ? null : console.log(err);
       res.json(result.rows);
     }
   );
