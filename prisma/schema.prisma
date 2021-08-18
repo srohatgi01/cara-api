@@ -9,21 +9,21 @@ datasource db {
 
 model appointment_details {
   appointment_details_id Int          @id @default(autoincrement())
-  appointment_id         BigInt
-  service_id             BigInt
+  appointment_id         Int
+  service_id             Int
   appointments           appointments @relation(fields: [appointment_id], references: [appointment_id])
   services               services     @relation(fields: [service_id], references: [service_id])
 }
 
 model appointments {
-  appointment_id      BigInt                @id @default(autoincrement())
+  appointment_id      Int                   @id @default(autoincrement())
   user_id             String                @db.VarChar(120)
   salon_id            Int
-  chair_number        String                @db.Char(2)
+  chair_number        String                @db.VarChar(2)
   date_of_appointment DateTime              @db.Date
   appointment_stamp   DateTime?             @default(now()) @db.Timestamp(6)
-  total_price         String                @db.VarChar(7)
-  appointment_status  appointment_status?
+  total_price         Decimal               @db.Money
+  appointment_status  appointment_status?   @default(BOOKED)
   slot_id             Int?
   salon               salon                 @relation(fields: [salon_id], references: [salon_id])
   slots               slots?                @relation(fields: [slot_id], references: [slot_id])
@@ -43,7 +43,7 @@ model brand {
 }
 
 model categories {
-  category_id   BigInt     @id @default(autoincrement())
+  category_id   Int        @id @default(autoincrement())
   salon_id      Int
   category_name String     @db.VarChar(100)
   salon         salon      @relation(fields: [salon_id], references: [salon_id])
@@ -51,27 +51,30 @@ model categories {
 }
 
 model salon {
-  salon_id           Int            @id @default(autoincrement())
+  salon_id           Int              @id @default(autoincrement())
   brand_id           Int
-  salon_name         String         @db.VarChar(120)
-  address_line_one   String         @db.VarChar(100)
-  address_line_two   String?        @db.VarChar(100)
-  address_line_three String?        @db.VarChar(100)
-  zipcode            String         @db.Char(6)
-  email_address      String         @db.VarChar(120)
-  contact_number     String         @db.Char(10)
-  logo               String?        @db.VarChar(255)
-  photos             String[]       @db.VarChar
-  website            String?        @db.VarChar(255)
-  joinstamp          DateTime?      @default(now()) @db.Timestamp(6)
-  open_year          String?        @db.Char(4)
-  open_time          DateTime       @db.Time(6)
-  close_time         DateTime       @db.Time(6)
+  salon_name         String           @db.VarChar(120)
+  address_line_one   String           @db.VarChar(100)
+  address_line_two   String?          @db.VarChar(100)
+  address_line_three String?          @db.VarChar(100)
+  zipcode            String           @db.Char(6)
+  email_address      String           @db.VarChar(120)
+  contact_number     String           @db.Char(10)
+  logo               String?          @db.VarChar(255)
+  photos             String[]         @db.VarChar
+  website            String?          @db.VarChar(255)
+  joinstamp          DateTime?        @default(now()) @db.Timestamp(6)
+  open_year          String?          @db.Char(4)
+  open_time          DateTime         @db.Time(6)
+  close_time         DateTime         @db.Time(6)
   open_weekdays      weekdays[]
   number_of_chairs   Int?
-  salon_type         salon_type     @default(UNISEX)
-  brand              brand          @relation(fields: [brand_id], references: [brand_id])
+  city               Int?
+  salon_type         salon_type       @default(UNISEX)
+  brand              brand            @relation(fields: [brand_id], references: [brand_id])
+  city_cityTosalon   city?            @relation(fields: [city], references: [city_id])
   appointments       appointments[]
+  cara_standards     cara_standards[]
   categories         categories[]
   slots              slots[]
   upper_banner       upper_banner[]
@@ -80,10 +83,11 @@ model salon {
 }
 
 model services {
-  service_id          BigInt                @id @default(autoincrement())
-  category_id         BigInt
+  service_id          Int                   @id @default(autoincrement())
+  category_id         Int
   service_name        String                @db.VarChar(100)
-  service_price       String                @db.VarChar(7)
+  service_price       Decimal               @db.Money
+  description         String?
   categories          categories            @relation(fields: [category_id], references: [category_id])
   appointment_details appointment_details[]
 }
@@ -112,11 +116,11 @@ model upper_banner {
 }
 
 model user_rating {
-  user_rating_id BigInt        @id @default(autoincrement())
-  appointment_id BigInt
+  rating_id      Int           @id @default(autoincrement())
+  appointment_id Int
   user_id        String        @db.VarChar(120)
   salon_id       Int
-  user_rating    star_rating
+  user_rating    Int?          @db.SmallInt
   appointments   appointments  @relation(fields: [appointment_id], references: [appointment_id])
   salon          salon         @relation(fields: [salon_id], references: [salon_id])
   users          users         @relation(fields: [user_id], references: [email_address])
@@ -124,36 +128,73 @@ model user_rating {
 }
 
 model user_review {
-  review_id   BigInt      @id @default(autoincrement())
+  review_id   Int         @id @default(autoincrement())
   review_body String
   user_id     String      @db.VarChar(120)
   salon_id    Int
-  rating_id   BigInt
-  user_rating user_rating @relation(fields: [rating_id], references: [user_rating_id])
+  rating_id   Int
+  user_rating user_rating @relation(fields: [rating_id], references: [rating_id])
   salon       salon       @relation(fields: [salon_id], references: [salon_id])
   users       users       @relation(fields: [user_id], references: [email_address])
 }
 
 model users {
-  email_address String         @id @db.VarChar(120)
-  first_name    String         @db.VarChar(50)
-  last_name     String         @db.VarChar(50)
-  gender        gender?
-  zipcode       String         @db.Char(6)
-  phone_number  String         @db.Char(10)
-  photo_url     String?        @db.VarChar(255)
-  date_of_birth DateTime?      @db.Date
-  coins         Decimal?       @db.Money
-  joinstamp     DateTime?      @default(now()) @db.Timestamp(6)
-  appointments  appointments[]
-  user_rating   user_rating[]
-  user_review   user_review[]
+  email_address    String         @id @db.VarChar(120)
+  first_name       String         @db.VarChar(50)
+  last_name        String         @db.VarChar(50)
+  gender           gender?
+  zipcode          String         @db.Char(6)
+  phone_number     String         @db.Char(10)
+  photo_url        String?        @db.VarChar(255)
+  date_of_birth    DateTime?      @db.Date
+  coins            Decimal?       @db.Money
+  city             Int?
+  joinstamp        DateTime?      @default(now()) @db.Timestamp(6)
+  city_cityTousers city?          @relation(fields: [city], references: [city_id])
+  appointments     appointments[]
+  user_rating      user_rating[]
+  user_review      user_review[]
+}
+
+model city {
+  city_id   Int     @id @default(autoincrement())
+  city_name String  @db.VarChar(65)
+  state_id  Int
+  state     state   @relation(fields: [state_id], references: [state_id])
+  salon     salon[]
+  users     users[]
+}
+
+model country {
+  country_id   Int     @id @default(autoincrement())
+  country_name String  @db.VarChar(65)
+  state        state[]
+}
+
+model state {
+  state_id   Int     @id @default(autoincrement())
+  state_name String  @db.VarChar(65)
+  country_id Int
+  country    country @relation(fields: [country_id], references: [country_id])
+  city       city[]
+}
+
+model cara_standards {
+  standard_id       Int    @id @default(autoincrement())
+  salon_id          Int?
+  safety_measures   Int?   @db.SmallInt
+  professionalism   Int?   @db.SmallInt
+  social_conscience Int?   @db.SmallInt
+  miscellaneous     Int?   @db.SmallInt
+  salon             salon? @relation(fields: [salon_id], references: [salon_id])
 }
 
 enum appointment_status {
   BOOKED
   CANCELED_BY_USER
   CANCELED_BY_SALON
+  BUSY
+  COMPLETED
 }
 
 enum banner_position_number {
@@ -175,14 +216,6 @@ enum salon_type {
   MEN
   WOMEN
   UNISEX
-}
-
-enum star_rating {
-  ONE
-  TWO
-  THREE
-  FOUR
-  FIVE
 }
 
 enum weekdays {
