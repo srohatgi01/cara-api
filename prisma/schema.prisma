@@ -51,29 +51,30 @@ model categories {
 }
 
 model salon {
-  salon_id           Int            @id @default(autoincrement())
+  salon_id           Int              @id @default(autoincrement())
   brand_id           Int
-  salon_name         String         @db.VarChar(120)
-  address_line_one   String         @db.VarChar(100)
-  address_line_two   String?        @db.VarChar(100)
-  address_line_three String?        @db.VarChar(100)
-  zipcode            String         @db.Char(6)
-  email_address      String         @db.VarChar(120)
-  contact_number     String         @db.Char(10)
-  logo               String?        @db.VarChar(255)
-  photos             String[]       @db.VarChar
-  website            String?        @db.VarChar(255)
-  joinstamp          DateTime?      @default(now()) @db.Timestamp(6)
-  open_year          String?        @db.Char(4)
-  open_time          DateTime       @db.Time(6)
-  close_time         DateTime       @db.Time(6)
+  salon_name         String           @db.VarChar(120)
+  address_line_one   String           @db.VarChar(100)
+  address_line_two   String?          @db.VarChar(100)
+  address_line_three String?          @db.VarChar(100)
+  zipcode            String           @db.Char(6)
+  email_address      String           @db.VarChar(120)
+  contact_number     String           @db.Char(10)
+  logo               String?          @db.VarChar(255)
+  photos             String[]         @db.VarChar
+  website            String?          @db.VarChar(255)
+  joinstamp          DateTime?        @default(now()) @db.Timestamp(6)
+  open_year          String?          @db.Char(4)
+  open_time          DateTime         @db.Time(6)
+  close_time         DateTime         @db.Time(6)
   open_weekdays      weekdays[]
   number_of_chairs   Int?
   city               Int?
-  salon_type         salon_type     @default(UNISEX)
-  brand              brand          @relation(fields: [brand_id], references: [brand_id])
-  city_cityTosalon   city?          @relation(fields: [city], references: [city_id])
+  salon_type         salon_type       @default(UNISEX)
+  brand              brand            @relation(fields: [brand_id], references: [brand_id])
+  city_cityTosalon   city?            @relation(fields: [city], references: [city_id])
   appointments       appointments[]
+  cara_standards     cara_standards[]
   categories         categories[]
   slots              slots[]
   upper_banner       upper_banner[]
@@ -176,6 +177,16 @@ model state {
   country_id Int
   country    country @relation(fields: [country_id], references: [country_id])
   city       city[]
+}
+
+model cara_standards {
+  standard_id       Int    @id @default(autoincrement())
+  salon_id          Int?
+  safety_measures   Int?   @db.SmallInt
+  professionalism   Int?   @db.SmallInt
+  social_conscience Int?   @db.SmallInt
+  miscellaneous     Int?   @db.SmallInt
+  salon             salon? @relation(fields: [salon_id], references: [salon_id])
 }
 
 enum appointment_status {

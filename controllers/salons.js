@@ -18,6 +18,14 @@ const getSalonById = async (req, res) =>
             services: true,
           },
         },
+        cara_standards: {
+          select: {
+            safety_measures: true,
+            professionalism: true,
+            social_conscience: true,
+            miscellaneous: true
+          }
+        },
       },
     })
   );
