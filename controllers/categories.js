@@ -1,5 +1,4 @@
 const { PrismaClient } = require("@prisma/client");
-var JSONbig = require('json-bigint')
 const prisma = new PrismaClient();
 
 const getAllCategories = async (req, res) =>
