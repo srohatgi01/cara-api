@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const pool = require("../config");
 
+
 const getAllSlots = async (req, res) =>
   // This query is getting us all the available slots for the particular salon on a given date and ordering it by chair number and start time of the slot
   pool.query(
@@ -9,7 +10,7 @@ const getAllSlots = async (req, res) =>
 
     (err, result) => {
       err ? console.log(err) : null;
-      res.status(200).json(result.rows);
+      res.status(200).json(result.rows)
     }
   );
 

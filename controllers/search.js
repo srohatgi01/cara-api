@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+// TODO: search by address not working as expected
 const searchSalons = async (req, res) => {
   res.status(200).json(
     await prisma.salon.findMany({
