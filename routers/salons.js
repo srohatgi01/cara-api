@@ -38,7 +38,7 @@ router.post(
   "/",
   salonImagesUpload.fields([
     { name: "salonLogo", maxCount: 1 },
-    { name: "photos", maxCount: 6 },
+    { name: "photos", maxCount: 4 },
   ]),
   async (req, res) => {
     let photosList = [];

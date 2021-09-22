@@ -1,6 +1,6 @@
 {
   "name": "cara-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is the official REST Api for the Cara App/Web App",
   "main": "server.js",
   "scripts": {

@@ -19,6 +19,7 @@ const app = express()
 // Middlewares
 app.use(cors())
 app.use(express.json())
+app.use('/uploads/', express.static('uploads'))
 
 app.get('/', (req, res) => res.send('Welcome to the API for Cara'))
 app.use('/api/v1/', homePage)
