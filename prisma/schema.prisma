@@ -76,6 +76,7 @@ model salon {
   appointments       appointments[]
   cara_standards     cara_standards[]
   categories         categories[]
+  salons_cred        salons_cred[]
   slots              slots[]
   upper_banner       upper_banner[]
   user_rating        user_rating[]
@@ -187,6 +188,14 @@ model cara_standards {
   social_conscience Int?   @db.SmallInt
   miscellaneous     Int?   @db.SmallInt
   salon             salon? @relation(fields: [salon_id], references: [salon_id])
+}
+
+model salons_cred {
+  salons_cred_id       Int    @id @default(autoincrement())
+  salons_cred_email_id String @unique @db.VarChar(256)
+  salons_cred_password String @db.VarChar(256)
+  salon_id             Int?
+  salon                salon? @relation(fields: [salon_id], references: [salon_id])
 }
 
 enum appointment_status {

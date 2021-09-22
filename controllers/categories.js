@@ -22,7 +22,6 @@ const createNewCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => res.json("Update Category Details");
 
-//TODO: Delete category
 const deleteCategory = async (req, res) =>
   res.json("Delete a particular Category");
 
