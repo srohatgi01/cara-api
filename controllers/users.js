@@ -34,12 +34,25 @@ const getUserById = async (req, res) =>
     userById != null ? res.status(200).json(userById) : res.status(404).json({'err': 'User Not Found'})
   }
 
-//TODO: Create Update User function
-const updateUser = (req, res) => {
-  res.send(`Update User info for ${req.params.id}`);
+const updateUser = async (req, res) => {
+ let updatedUser = await prisma.users.update({
+    where: {
+      email_address: req.params.id
+    },
+    data: {
+      zipcode: `${req.body.zipcode}`,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      date_of_birth: req.body.date_of_birth,
+      gender: req.body.gender,
+      coins: req.body.coins,
+    }
+  })
+
+  res.json(updatedUser)
 };
-//TODO: Create Delete User function
-const deleteUser = (req, res) => res.send(`User deleted for ${req.params.id}`);
+
+const deleteUser = (req, res) => res.send("delete user");
 
 module.exports = {
   getAllUsers,

@@ -23,28 +23,28 @@ const getSalonById = async (req, res) =>
             safety_measures: true,
             professionalism: true,
             social_conscience: true,
-            miscellaneous: true
-          }
+            miscellaneous: true,
+          },
         },
       },
     })
   );
 
-const createNewSalon = async (req, res) => {
-  let newSalon = await prisma.salon.create({
+
+const updateSalon = async (req, res) => {
+  let updatedSalon = await prisma.salon.update({
+    where: {
+      salon_id: parseInt(req.params.id),
+    },
     data: {
-      brand_id: req.body.brand_id,
       salon_name: req.body.salon_name,
       address_line_one: req.body.address_line_one,
       address_line_two: req.body.address_line_two,
       address_line_three: req.body.address_line_three,
-      zipcode: req.body.zipcode,
+      zipcode: `${req.body.zipcode}`,
       email_address: req.body.email_address,
       contact_number: req.body.contact_number,
-      logo: req.body.logo,
-      photos: req.body.photos,
       website: req.body.website,
-      open_year: req.body.open_year,
       open_time: req.body.open_time,
       close_time: req.body.close_time,
       open_weekdays: req.body.open_weekdays,
@@ -52,16 +52,8 @@ const createNewSalon = async (req, res) => {
       salon_type: req.body.salon_type,
     },
   });
-  res.status(201).json(newSalon);
+  res.json(updatedSalon);
 };
-
-//TODO: Update Salon Function
-const updateSalon = async (req, res) => {
-  res.json("Update Salon");
-};
-
-//TODO: Delete Salon Function
-const deleteSalon = async (req, res) => res.json("Delete salon");
 
 // Get 6 salons when you give the zipcode
 const recommenedSalonsByZipcode = async (req, res) => {
@@ -77,9 +69,9 @@ const recommenedSalonsByZipcode = async (req, res) => {
 
     (err, result) => {
       err == null ? null : console.log(err);
-      //Error handeling + response 
+      //Error handeling + response
       result.rows.length === 0
-        ? res.status(200).json({ msg: "No Salons found" })
+        ? res.status(404).json({ msg: "No Salons found" })
         : res.status(200).json(result.rows);
     }
   );
@@ -96,18 +88,44 @@ const recommenedSalons = async (req, res) => {
     `,
     (err, result) => {
       err == null ? null : console.log(err);
-      res.json(result.rows);
+      
+      result.rows.length > 0 ?
+      res.json(result.rows) :
+      res.status(404).json({"msg": "No salons found"})
+      
     }
   );
+};
+
+// this will do authentication process. it will take email and password and will return the salon id associated with the credentials
+const getSalonId = async (req, res) => {
+  let id = await prisma.salons_cred.findMany({
+    select: {
+      salon_id: true,
+    },
+    where: {
+      AND: [
+        {
+          salons_cred_email_id: req.params.email,
+        },
+        {
+          salons_cred_password: req.params.password,
+        },
+      ],
+    },
+  });
+
+  id.length < 1
+    ? res.status(404).json({ msg: "not found" })
+    : res.status(200).json(id[0]);
 };
 
 // Exports
 module.exports = {
   getAllSalons,
   getSalonById,
-  createNewSalon,
   updateSalon,
-  deleteSalon,
   recommenedSalonsByZipcode,
   recommenedSalons,
+  getSalonId,
 };
