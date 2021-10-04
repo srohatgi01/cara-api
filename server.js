@@ -1,5 +1,4 @@
 const express = require('express')
-const { PrismaClient } = require('@prisma/client')
 require('dotenv').config()
 var cors = require('cors')
 
@@ -13,6 +12,8 @@ const recommendations = require('./routers/recommendations')
 const advertisments = require('./routers/advertisments')
 const search = require('./routers/search')
 const appointment = require('./routers/appointment')
+
+
 const app = express()
 
 
@@ -28,7 +29,7 @@ app.use('/api/v1/salons/', salons)
 app.use('/api/v1/categories/', categories)
 app.use('/api/v1/brands/', brands)
 app.use('/api/v1/recommendations/', recommendations)
-app.use('/api/v1/advertisments/', advertisments)
+app.use('/api/v1/display/', advertisments)
 app.use('/api/v1/search/',search)
 app.use('/api/v1/appointments/',appointment)
 
