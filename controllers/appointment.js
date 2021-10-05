@@ -137,14 +137,24 @@ const getAppointmentsForUser = async (req, res) =>
 const getAppointmentsForSalon = async (req, res) =>
   res.status(200).json(
     await prisma.appointments.findMany({
+      orderBy: [
+        {
+          slot_id: 'desc',
+        } ,
+      ],
+      
       select: {
+        
         appointment_id: true,
         appointment_status: true,
         chair_number: true,
         appointment_stamp: true,
         total_price: true,
+        date_of_appointment: true,
         slots: {
+          
           select: {
+            
             start_time: true,
           },
         },
@@ -168,6 +178,9 @@ const getAppointmentsForSalon = async (req, res) =>
       where: {
         salon_id: parseInt(req.params.id),
         date_of_appointment: req.params.date + "T00:00:00.000Z",
+        appointment_status: {
+          not: 'BUSY'
+        }
       },
     })
   );

@@ -29,6 +29,7 @@ const {
   getSalonById,
   updateSalon,
   getSalonId,
+  getCompletedAppointmentFromMonth,
 } = require("../controllers/salons");
 
 //Routes
@@ -70,4 +71,5 @@ router.post(
 );
 router.route("/:id").get(getSalonById).patch(updateSalon);
 router.route("/auth/:email/:password").get(getSalonId);
+router.route("/tally/:salonId/:month").get(getCompletedAppointmentFromMonth);
 module.exports = router;
