@@ -16,7 +16,6 @@ const appointment = require('./routers/appointment')
 
 const app = express()
 
-
 // Middlewares
 app.use(cors())
 app.use(express.json())

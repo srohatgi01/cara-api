@@ -25,7 +25,7 @@ router.route("/update/:id").patch(updateAppointmentStatus);
 // To get all the data from apppointment details table
 router.route("/details").get(getAllAppointmentDetails);
 
-//Get all the salons from salon id as well as date
+//Get all the slots from salon id as well as date
 router.route("/slots/:id/:date").get(getAllSlots);
 
 //Get all slots from salon id, date and chair number

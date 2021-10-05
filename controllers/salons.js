@@ -30,7 +30,6 @@ const getSalonById = async (req, res) =>
     })
   );
 
-
 const updateSalon = async (req, res) => {
   let updatedSalon = await prisma.salon.update({
     where: {
@@ -88,11 +87,10 @@ const recommenedSalons = async (req, res) => {
     `,
     (err, result) => {
       err == null ? null : console.log(err);
-      
-      result.rows.length > 0 ?
-      res.json(result.rows) :
-      res.status(404).json({"msg": "No salons found"})
-      
+
+      result.rows.length > 0
+        ? res.json(result.rows)
+        : res.status(404).json({ msg: "No salons found" });
     }
   );
 };
@@ -120,6 +118,45 @@ const getSalonId = async (req, res) => {
     : res.status(200).json(id[0]);
 };
 
+const getCompletedAppointmentFromMonth = async (req, res) => {
+  let year = new Date().getFullYear();
+
+  pool.query(
+    `
+    select appointments.appointment_id, appointments.date_of_appointment, appointments.total_price, s.start_time from appointments inner join slots as s on s.slot_id = appointments.slot_id where appointment_status = 'COMPLETED' AND appointments.salon_id = ${
+      req.params.salonId
+    } AND date_of_appointment >= '${year}-${
+      req.params.month
+    }-01' AND date_of_appointment < '${year}-${
+      req.params.month != 12 ? parseInt(req.params.month) + 1 : 1
+    }-01';
+    `,
+    (err, result) => {
+      err == null ? null : console.log(err);
+      let totalPrice = 0;
+      if (result.rows.length > 0) {
+        result.rows.map((row) => {
+         
+          let price = parseFloat(row["total_price"].split("$")[1].replace(",", ""))
+        
+          totalPrice += price
+        });
+
+        let comission = (totalPrice * process.env.PERCENTAGE)/100;
+
+        obj = {
+          "completed_appointments": result.rows.length,
+          "comission": comission,
+          "total_price": totalPrice,
+          "percentage": process.env.PERCENTAGE,
+          "rows": result.rows
+        }        
+        res.status(200).json(obj);
+      } else res.status(404).json({ msg: "No appointments found" });
+    }
+  );
+};
+
 // Exports
 module.exports = {
   getAllSalons,
@@ -128,4 +165,5 @@ module.exports = {
   recommenedSalonsByZipcode,
   recommenedSalons,
   getSalonId,
+  getCompletedAppointmentFromMonth,
 };

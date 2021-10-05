@@ -11,14 +11,34 @@ const getAdvertisementsByZipcode = async (req, res) => {
     (err, result) => {
      if(err) console.log(err);
       //Error handeling + response
-      if(result.rows.length === 0) {
-        res
-        .status(404)
-        .json({ msg: "No Banners Found for this particular ZipCode" })
-      } else {
-        bannerList = [1, 2, 3, 4, 5, 6];
+
+        let object = [
+          {
+            "banner_url": process.env.URL_1
+          },
+          {
+            "banner_url": process.env.URL_2
+          },
+          {
+            "banner_url": process.env.URL_3
+          },
+          {
+            "banner_url": process.env.URL_4
+          },
+          {
+            "banner_url": process.env.URL_5
+          },
+          {
+            "banner_url": process.env.URL_6
+          },
+        ]
+
+        let j=0;
+
+        bannerList = [0,0,0,0,0,0];
+        
         for (let i = 0; i < 6; i++) {
-          switch (result.rows[i].banner_position_number) {
+          switch (result.rows[i]?result.rows[i].banner_position_number:"VAR") {
             case "ONE":
               bannerList[0] = result.rows[i];
               break;
@@ -37,11 +57,18 @@ const getAdvertisementsByZipcode = async (req, res) => {
             case "SIX":
               bannerList[5] = result.rows[i];
               break;
+            default:
+              "";
+          }
+
+        }
+        for(let i=0;i<6;i++){
+          if(bannerList[i]==0){
+            bannerList[i] = object[j]
+            j=j+1;
           }
         }
         res.status(200).json(bannerList);
-      }
-    
     }
   );
 };
