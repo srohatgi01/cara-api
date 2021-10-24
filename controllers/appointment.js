@@ -160,6 +160,7 @@ const getAppointmentsForSalon = async (req, res) =>
         },
         users: {
           select: {
+            email_address: true,
             first_name: true,
             last_name: true,
           },
